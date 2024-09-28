@@ -1,0 +1,117 @@
+.parentContainer {
+    width: 95%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    display: inline-flex;
+    gap: 10px;
+    justify-content: space-between;
+    position: relative; /* 添加相对定位 */
+}
+
+.logo {
+    font-family: 'Pacifico', cursive;
+    font-size: 24px;
+    color: #333;
+}
+
+.h2 {
+    width: 300px;
+    margin: 0;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+    font-weight: lighter;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: center;
+}
+
+.h2:hover {
+    background-color: #ccc;
+}
+
+.ul {
+    list-style-type: none;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    position: absolute; /* 绝对定位 */
+    width: 100%; /* 使其宽度与父容器一致 */
+    background-color: #fff; /* 背景颜色 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    z-index: 10; /* 确保其在前面 */
+}
+
+.ul.expanded {
+    max-height: 5000px; /* 根据需要调整最大高度 */
+}
+
+.li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.ApproveButton, .RejectButton, .button, .DeleteButton {
+    margin-left: 10px;
+}
+
+.reject {
+    background-color: red;
+    color: white;
+}
+
+.delete {
+    background-color: red;
+    color: white;
+}
+
+.userManagementSection {
+    margin-top: 10px;
+    gap: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.section {
+    width: 100%;
+    position: relative; /* 添加相对定位 */
+}
+
+@media (max-width: 768px) {
+    .slang-form {
+        flex-direction: column;
+    }
+
+    .container {
+        width: 100%;
+        display: inline-flex;
+        gap: 10px;
+        justify-content: space-between;
+        position: relative; /* 添加相对定位 */
+        flex-direction: column;
+
+    }
+
+    .userManagementSection {
+        margin-top: 10px;
+        gap: 10px;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

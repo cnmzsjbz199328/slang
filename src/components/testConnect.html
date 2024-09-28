@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        .image {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Backend Connection Test</h1>
+    <input type="text" id="promptInput" placeholder="Enter prompt for image generation">
+    <button id="testButton">Test Connection</button>
+    <div id="response" class="response"></div>
+    <div id="imageContainer" class="image"></div>
+
+    <script type="module">
+        import config from '../config.js'; // Adjust the path to your config.js file
+
+        document.getElementById('testButton').addEventListener('click', async () => {
+            const responseDiv = document.getElementById('response');
+            const imageContainer = document.getElementById('imageContainer');
+            const prompt = document.getElementById('promptInput').value;
+            responseDiv.innerHTML = 'Testing connection...';
+            imageContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`${config.apiHost}/generateImage.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Network response was not ok: ${errorText}`);
+                }
+
+                const data = await response.text(); // Get the response as text
+
+                if (data.startsWith('iVBORw0KGgo')) { // Check if the response is a Base64 encoded image
+                    responseDiv.innerHTML = `<div class="success">Success: Image generated successfully</div>`;
+                    const img = document.createElement('img');
+                    img.src = `data:image/png;base64,${data}`;
+                    imageContainer.appendChild(img);
+                } else {
+                    responseDiv.innerHTML = `<div class="error">Error: ${data}</div>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="error">Error connecting to the backend or database: ${error.message}</div>`;
+                console.error('Detailed error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

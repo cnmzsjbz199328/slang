@@ -1,0 +1,60 @@
+.footer {
+    color: rgb(0, 0, 0);
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    background-color: #fff; /* 添加背景颜色以确保内容可见 */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影以区分内容 */
+    z-index: 1000; /* 确保在其他内容之上 */
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.social-media {
+    margin-top: 10px;
+}
+
+.social-media a {
+    margin: 0 10px;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.social-media a:hover {
+    color: #007bff;
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .footer {
+        padding: 10px 0;
+    }
+
+    .footer-content {
+        padding: 0 10px;
+    }
+
+    .footer-content p {
+        font-size: 12px;
+    }
+
+    .social-media a {
+        font-size: 14px;
+        margin: 0 5px;
+    }
+}
