@@ -1,31 +1,33 @@
 // src/components/SearchNavbar/SearchNavbar.js
 import React, { useState } from 'react';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './SearchNavbar.css';
 import LoginModal from './LoginModal';
 
 const SearchNavbar = ({ onSearch }) => {
-    const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('Slang');
-    const [isListening, setIsListening] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Search Term:', searchTerm);
+        console.log('Search Term:', transcript);
         console.log('Filter Type:', filterType); // 检查过滤类型是否正确
-        onSearch(searchTerm, filterType);
+        onSearch(transcript, filterType);
     };
-    
+
     const handleVoiceInput = () => {
-        const recognition = new window.webkitSpeechRecognition();
-        recognition.lang = 'en-AU';
-        recognition.onresult = (event) => {
-            setSearchTerm(event.results[0][0].transcript);
-            onSearch(event.results[0][0].transcript, filterType);
-        };
-        recognition.start();
-        setIsListening(true);
-        recognition.onend = () => setIsListening(false);
+        if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+            alert('Your browser does not support speech recognition. Please use a different browser.');
+            return;
+        }
+
+        if (listening) {
+            SpeechRecognition.stopListening();
+        } else {
+            resetTranscript();
+            SpeechRecognition.startListening({ continuous: true, language: 'en-AU' });
+        }
     };
 
     return (
@@ -38,8 +40,8 @@ const SearchNavbar = ({ onSearch }) => {
                     type="text"
                     className="search-input"
                     placeholder="Search Slang here..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={transcript}
+                    onChange={(e) => resetTranscript(e.target.value)}
                 />
                 <select
                     className="filter-select"
@@ -51,7 +53,7 @@ const SearchNavbar = ({ onSearch }) => {
                     <option value="Contributor">Contributor</option>
                 </select>
                 <button type="button" className="voice-button" onClick={handleVoiceInput}>
-                    {isListening ? 'Listening...' : '🎤'}
+                    {listening ? 'Listening...' : '🎤'}
                 </button>
                 <button type="submit" className="search-button">Search</button>
             </form>

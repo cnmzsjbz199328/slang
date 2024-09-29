@@ -14,8 +14,7 @@ const ContentItem = ({ id, imageSrc, slang, explanation, audioSrc, contributor, 
         }
         setIsPlaying(!isPlaying);
     };
-
-
+    let absoluteAudioSrc = audioSrc.replace('api/../', '');
     return (
         <div className={styles['content-item']}>
             <div className={styles['content-item-id']}>{id}</div>
@@ -30,7 +29,7 @@ const ContentItem = ({ id, imageSrc, slang, explanation, audioSrc, contributor, 
                 <button onClick={handleAudioToggle}>
                     {isPlaying ? '⏸️' : '🔊'}
                 </button>
-                <audio ref={audioRef} src={audioSrc} />
+                <audio ref={audioRef} src={absoluteAudioSrc} />
             </div>
         </div>
     );

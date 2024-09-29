@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ReactMediaRecorder } from 'react-media-recorder';
 import styles from './AddSlang.module.css'; // Import CSS module
 import config from '../config'; // Import config
 import SlangManager from '../components/SlangManage'; // 导入 SlangManager 组件
+import LoginModal from '../components/LoginModal'; // 导入 LoginModal 组件
 
 const AddSlang = () => {
     const [formData, setFormData] = useState({
@@ -13,7 +15,6 @@ const AddSlang = () => {
         audio: null
     });
     const [imagePreview, setImagePreview] = useState(null);
-    const [audioPreview, setAudioPreview] = useState(null);
     const [isGeneratingImage, setIsGeneratingImage] = useState(false);
     const [isImageGenerated, setIsImageGenerated] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,8 +22,18 @@ const AddSlang = () => {
     const [leftWidth, setLeftWidth] = useState(30); // 左侧宽度百分比
     const [isDragging, setIsDragging] = useState(false);
     const [, setFileName] = useState(''); // 用于存储文件名
+    const [showLoginModal, setShowLoginModal] = useState(false); // 控制登录模态框的显示
 
     const fileInputRef = useRef(null); // 引用文件输入控件
+    const audioContainerRef = useRef(null); // 引用音频容器
+    const navigate = useNavigate(); // 使用 useNavigate 进行重定向
+
+    useEffect(() => {
+        const username = sessionStorage.getItem('username');
+        if (!username) {
+            navigate('/login'); // 重定向到登录页面
+        }
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -47,7 +58,18 @@ const AddSlang = () => {
             ...prevState,
             audio: blob
         }));
-        setAudioPreview(blobUrl);
+        addAudioPreview(blob);
+    };
+
+    const addAudioPreview = (blob) => {
+        const audioContainer = audioContainerRef.current;
+        if (audioContainer) {
+            audioContainer.innerHTML = ''; // 清空之前的音频预览
+            const audio = document.createElement('audio');
+            audio.setAttribute('controls', '');
+            audio.src = window.URL.createObjectURL(blob);
+            audioContainer.appendChild(audio);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -91,7 +113,6 @@ const AddSlang = () => {
             setIsSubmitting(false);
         }
     };
-
 
     const handleGenerateImage = async () => {
         setIsGeneratingImage(true);
@@ -138,7 +159,10 @@ const AddSlang = () => {
 
     return (
         <div className={styles['add-slang-container']} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <h2>Add New Slang</h2>
+            <div className={styles['headerContainer']}>
+                <h1 className={styles.logo} onClick={() => window.location.href = '/'}>Australian Slang</h1>
+                <h2>Add New Slang</h2>
+            </div>
             <form onSubmit={handleSubmit} className={styles['slang-form']}>
                 <div className={styles['left-section']} style={{ width: `${leftWidth}%` }}>
                     <div className={styles['form-group']}>
@@ -159,7 +183,7 @@ const AddSlang = () => {
                                     <button type="button" onClick={startRecording} style={{ marginRight: '10px' }}>Start Recording</button>
                                     <button type="button" onClick={stopRecording}>Stop Recording</button>
                                     <p>Status: {status}</p>
-                                    {audioPreview && <audio src={audioPreview} controls style={{ display: 'block', marginTop: '10px' }} />}
+                                    <div ref={audioContainerRef}></div>
                                 </div>
                             )}
                         />
@@ -219,6 +243,7 @@ const AddSlang = () => {
                     />
                 </div>
             </form>
+            <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} /> {/* 显示登录模态框 */}
         </div>
     );
 };
